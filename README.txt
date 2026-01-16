@@ -1,10 +1,21 @@
 EXPERIENCE DE RUST INTERACTIF 
+(v 1.5)
 
 Mettez ce texte dans un ia pour avoir la doc interactive ‼️
 
 
 
+--------------------------------------------------------------------------------
+📖 Notes de version:
 
+v 1.5
+    Ajout d'un triche pour faire continuer le compteur et donner l'illusion que
+    le programme tourne toujours.
+    (il s'arrete recompile et reprend au nombre sauvegarder !)
+
+v 1.0
+    programme de base
+--------------------------------------------------------------------------------
 
 
 
