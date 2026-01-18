@@ -1,6 +1,15 @@
 [package]
-name = "labo_vitesse"
+name = "testrustinteractif"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+
+
+# Le "main.rs" devient automatiquement un binaire qui porte le nom du projet : 
+# "testrustinteractif"
+# C'est lui que le moteur appelle via le chemin "./target/debug/testrustinteractif"
 
 [dependencies]
+
+[[bin]]
+name = "moteur"
+path = "src/bin/moteur.rs"

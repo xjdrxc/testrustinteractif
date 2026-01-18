@@ -1,20 +1,30 @@
 EXPERIENCE DE RUST INTERACTIF 
-(v 1.5)
+(V 2.0)
 
-Mettez ce texte dans un ia pour avoir la doc interactive ‼️
+⚠️ AVANT DE COMMENCER ⚠️
+    - LE README / les commentaires dans le code sont écrit en Fr 🇫🇷
+    - Fonctionne actuellement sur mac et linux (🚫 Windows)
+    - Mettez ce texte dans un ia pour avoir la doc interactive ‼️
+    
 
 
 
 --------------------------------------------------------------------------------
 📖 Notes de version:
 
-v 1.5
-    Ajout d'un triche pour faire continuer le compteur et donner l'illusion que
-    le programme tourne toujours.
-    (il s'arrete recompile et reprend au nombre sauvegarder !)
+✅ V 2.0
+    Restructuration totale du code !
+	    -Architecture Master/Worker. 
+        -Moteur immortel et logique interchangeable via main.rs (Hot-Swapping).
 
-v 1.0
-    programme de base
+❌ V 1.5 
+    Ajout d'une triche pour faire continuer le compteur et donner l'illusion que
+    le programme tourne toujours.
+        (il s'arrete recompile et reprend aprés nombre où il a stop !
+        experimentale pas du tt fiable il faut une solution sur en v2)
+
+❌ V 1.0
+    programme de base 
 --------------------------------------------------------------------------------
 
 
@@ -22,7 +32,7 @@ v 1.0
 
 
 
-=============================================================================== 
+================================================================================ 
 🇫🇷 Explication :
 
 Ici le but est d'avoir un code qu'on puisse modifier et 
@@ -34,11 +44,22 @@ notre code,et de surveiller les fichiers pour voir s'ils sont modifiés.
 S'ils sont modifiés, on va juste recompiler la partie concernée et la remettre 
 dans le linker sans toucher aux autres parties.
 
-Dans ce test on a un petit programme très simple, on a une boucle qui chaque 
+Le but ici est très simple, on a une boucle qui chaque 
 seconde incrémente un compteur et qui affiche une valeur : 
     valeur = compteur * nombre à modifier 
 Pour montrer que le script se recompile à la volée, on modifie le nombre et on 
 sauvegarde. Le script va se recompiler et se relancer.
+
+La V 2.0 restructure totalement le code !
+Ici nous avons toujours cargo watch qui surveille en permanence les modifications 
+du dossier et recompile si besoin.
+au-dessus du cargo watch, nous executons un moteur "moteur.rs" (qui est le vrai 
+programme principal), qui va se charger d'appeler un processus.
+C'est ce processus qu'on va modifier et qui va induire les modifications 
+en temps réel et sans interruption du programme principale!
+(Attention par "confort" le vrai point d'entree du projet est "moteur.rs" car 
+derriere on code ce qu'on veut dans le main c'est pour etre transparant au 
+niveau programmeur)
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -55,11 +76,16 @@ sauvegarde. Le script va se recompiler et se relancer.
 4-  Dans le dossier "src" du dossier,
     ouvrir le "main.rs" dans votre IDE
 
-5-  Avec le terminal, se placer dans le dossier
+5-  Avec une premiere instance terminal, se placer dans le dossier
 
-6-  Lancer la commande : cargo watch -x run
+6-  Lancer la commande : cargo watch -x build
+    (cette cmd ne redonne pas la main a l'utilisateur)
 
-7-  Pendant que le script se lance dans le terminal,
+7-  Avec une seconde instance terminal, se placer dans le dossier
+
+8-  Lancer la commande : cargo run --bin moteur
+
+9-  Pendant que le script se lance dans le terminal,
     dans votre IDE, modifier le script à l'emplacement prévu :
 
         // --- ZONE DE TEST : MODIFIE LA LOGIQUE ICI ---
@@ -68,100 +94,49 @@ sauvegarde. Le script va se recompiler et se relancer.
 
     (le nombre 1 par le nombre que vous voulez, 10 par exemple)
 
-8-  Sauvegarder le fichier et voyez le résultat
+10- Sauvegarder le fichier et voyez le résultat
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
-⚠️ Attention : ceci est une preuve de concept, en aucun cas un produit final !
+📂 Structure du dossier:
+
+v 📂 testrustinteractif 
+      📄 Cargo.lock         //imperatif pour le compilateur Rust Cargo
+      📄 Cargo.toml         //imperatif pour le compilateur Rust Cargo
+      📄 README.txt         //utile pr comprendre le projet
+    v 📂 src
+          📄 main.rs        //fichier a modifier pour la compilation dynamique
+        v 📂 bin            //fichier obligatoire pour la structure Rust
+            📄 moteur.rs    //Point d'entree du processus ‼️
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+⚠️ Info + test : ceci est une preuve de concept, en aucun cas un produit final !
 
 Déjà, pour que ce soit implémentable dans une application, il faudrait dire au 
 système que le cargo watch tourne en même temps dès qu'on lance l'appli.
 
 Ensuite, en fonction des processeurs, de la RAM et de l'OS, la recompilation se 
-fait plus ou moins rapidement ! (entre 0,5s et 5s lors de mes tests)
+fait plus ou moins rapidement ! 
+(entre 0,5s et 5s lors de mes tests pour la V1)
+(entre 0,5s et 2s lors de mes tests pour la V2)
 
-(Personnellement j'ai essayé de rendre le programme prioritaire avec la
-commande  "nice" + de changer le linker par le linker overkill de macOS.
-Je tourne entre 0,5 et 1s. Voici les cmd terminal pour le faire sur macOS 15
-avec processeur x86 :
-
-export CARGO_TARGET_DIR=/tmp/rust_target &&
-export RC_TRACE_DEPENDENCIES=1 &&
-export XCODE_DEVELOPER_USR_PATH=/Applications/Xcode.app/Contents/Developer/usr/bin &&
-LDFLAGS="-fuse-ld=ld"
-sudo nice -n -20 sudo -u $(whoami) cargo watch -x run
-
-Cherchez les mêmes commandes qui correspondent à votre config)
-===============================================================================  
+//Explication sur l'optimisation suprimer plus valable en V2
+================================================================================
 
 
 
 
 
-=============================================================================== 
-🇺🇸 Explanation: 
+Git :
+Il manque cruellement des outils pour nettoyer l’historique simplement ‼️
+Imaginez un vieux commit contenant une faille de sécurité critique : vous n’avez
+aucun moyen de le faire disparaître proprement sans affecter le reste du projet.
+Pour le supprimer, vous perdez une journée à vous battre avec le terminal, Git 
+corrompt votre historique au passage, pour finir par bricoler des solutions
+manuelles.
 
-The goal here is to have code that can be modified and recompiled on the fly, 
-applying changes in real-time.
+Git est une mini-blockchain, pas l’outil de versioning interactif qu’on veut 
+nous vendre.
 
-Since we are using Rust, we use cargo watch (a dedicated dependency). It allows 
-cargo to compile our code incrementally and monitor files for changes. If a change 
-is detected, it only recompiles the affected part and updates the linker without 
-touching other parts.
-
-In this test, we have a very simple program, a loop that increments a counter every 
-second and displays a value: 
-    value = counter * number to modify To demonstrate 
-on-the-fly recompilation, change the number and save the file. The script will 
-recompile and restart automatically.
---------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
-▶️ How to execute:
-
-1-  Have Rust installed on your machine
-        (install Rust via your terminal if not already done)
-
-2-  Install cargo watch cargo install cargo-watch
-
-3-  Download this project folder to your machine
-
-4-  In the "src" folder, open "main.rs" in your IDE
-
-5-  Navigate to the project folder using your terminal
-
-6-  Run the command: cargo watch -x run
-
-7-  While the script is running, modify the code in your IDE at the following
-    location:
-
-        // --- TEST ZONE: MODIFY LOGIC HERE ---
-        let resultat = compteur * 1;
-        // ------------------------------------
-
-    (replace the number 1 with any number, e.g., 10)
-
-8-  Save the file and watch the result in the terminal
---------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
-⚠️ Warning: this is a proof of concept, not a final product!
-
-To implement this in a real application, the system would need to trigger
-cargo watch automatically upon launch.
-
-Recompilation speed varies depending on your CPU, RAM, and OS!
-(between 0.5s and 5s during my tests)
-
-(I personally tried to prioritize the program using the "nice" command and 
-switchingto the high-performance macOS linker. I achieved 0.5s to 1s speeds.
-Here are theterminal commands for macOS 15 on x86 processors:
-
-export CARGO_TARGET_DIR=/tmp/rust_target &&
-export RC_TRACE_DEPENDENCIES=1 &&
-export XCODE_DEVELOPER_USR_PATH=/Applications/Xcode.app/Contents/Developer/usr/bin &&
-LDFLAGS="-fuse-ld=ld"
-sudo nice -n -20 sudo -u $(whoami) cargo watch -x run
-
-Look for similar commands that match your specific configuration)
-===============================================================================
+Il est temps de repenser sa logique pour qu’il soit vraiment utile.
