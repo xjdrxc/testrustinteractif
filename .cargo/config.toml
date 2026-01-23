@@ -1,0 +1,9 @@
+# Parallélisation sur tous les cœurs
+# ⚠️  IMPORTANT : Adaptez cette valeur au nombre de cœurs & threads de VOTRE machine !!
+#
+#     Pour connaître votre nombre de cœurs & threads :
+#       - macOS/Linux : sysctl -n hw.ncpu  ou  nproc
+#       - Windows : echo %NUMBER_OF_PROCESSORS%
+#     Conseil : mettez la totalite
+[build]
+jobs = 8  # ← MODIFIEZ cette valeur selon votre CPU

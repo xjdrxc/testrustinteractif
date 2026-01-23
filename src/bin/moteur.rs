@@ -18,25 +18,32 @@ fn main() {
     let mut compteur = 0; //setup le compteur a 0
 
     // On définit le chemin complet vers le binaire du cerveau
-    let cerveau_path = "./target/debug/testrustinteractif";
+    // Cette ligne est un macro qui permet de detecter l'environement
+    // et de lui faire correspondre le binaire
+    // Le projet est donc rendu cross plateforme win/linux/macos
+    let cerveau_path = format!("./target/debug/testrustinteractif{}", 
+                                std::env::consts::EXE_SUFFIX);
 
     //on affiche que c ok
     println!("🚀 Moteur TEMPS RÉEL lancé.");
 
+    //lance la boucle
     loop {
 
         compteur += 1; //à chaque seconde compteur +1
 
 
 
-        // On prépare la commande système pour lancer le cerveau
+        // Ici on lance le cerveau et on lui passe en argument l'etat du compteur:
+        // output prend la valeur de ce que le cerveau va nous renvoyer
+        // Command::new(&cerveau_path) on définit qu'on va appeler le cerveau
         // .arg(...) transforme notre nombre en texte pour l'envoyer au cerveau
-        // .output() lance le programme et attend qu'il finisse pour récupérer le texte
-        let output = Command::new(cerveau_path)
+        // .output() lance le cerveau et attend qu'il finisse pour récupérer le texte
+        let output = Command::new(&cerveau_path)
             .arg(compteur.to_string())
             .output();
 
-        // On analyse le résultat du lancement du programme
+        // On analyse le résultat que le worker nous a envoyer
         match output {
 
                 // Cas où le programme s'est lancé correctement

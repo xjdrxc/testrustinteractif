@@ -1,15 +1,45 @@
+#-------------------------------------------------------------
 [package]
 name = "testrustinteractif"
 version = "0.1.0"
-edition = "2021"
+edition = "2024" #Projet en version 2024
 
-
-# Le "main.rs" devient automatiquement un binaire qui porte le nom du projet : 
-# "testrustinteractif"
-# C'est lui que le moteur appelle via le chemin "./target/debug/testrustinteractif"
 
 [dependencies]
+# Aucune dépendance externe nécessaire pour ce projet
+#-------------------------------------------------------------
+
+# --------------- ARCHITECTURE MASTER/WORKER -----------------
+# Ce projet génère 2 binaires :
+#
+# 1. "testrustinteractif" (depuis src/main.rs)
+#    → Le CERVEAU (Worker/Esclave)
+#    → Appelé par le moteur via ./target/debug/testrustinteractif
+#    → Contient la logique métier modifiable à chaud
+#
+# 2. "moteur" (depuis src/bin/moteur.rs)  
+#    → Le MOTEUR (Master/Maître)
+#    → Point d'entrée du système (lancé manuellement via `cargo run --bin moteur`)
+#    → Gère le temps, la persistance, et appelle le cerveau à chaque itération
+#    → Immortel : ne se recompile jamais, survit aux modifications du cerveau
 
 [[bin]]
 name = "moteur"
 path = "src/bin/moteur.rs"
+#-------------------------------------------------------------
+
+# ------------------- OPTION COMPILATION ---------------------
+[profile.dev]
+# Force la compilation incrémentale (compilation petit bout par petit bout)
+incremental = true
+
+# Suprime les outil de debug a la compilation (gain de performance)
+# ⚠️    ligne unquiment valide pour la release de votre projet 
+#       suprimez les si vous avez besoins du debug 
+debug = false           # Pas de symboles de debug
+overflow-checks = false # Pas de vérif overflow en runtime
+
+# Optimise les dépendances externes (pas ton code)
+[profile.dev.package."*"]
+opt-level = 3
+#-------------------------------------------------------------

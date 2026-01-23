@@ -41,7 +41,9 @@ fn main() {
         let resultat = compteur * 1; 
         // ---------------------------------------------
 
-                //attention ne prend que les entiers
+            // ⚠️ attention resultat en i32:
+            //      - ne prend donc que les entiers
+            //      - tester avec un nombre < à 10 chiffres 
 
 
 
